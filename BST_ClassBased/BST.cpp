@@ -8,7 +8,7 @@ BST::~BST() {
 	terminate_tree(root);
 }
 
-void BST::insert_integer(int value) {
+void BST::insert_integer_recursive(int value) {
 	insert_integer_recursion(root, value);
 }
 
@@ -31,6 +31,20 @@ void BST::insert_integer_recursion(node* node, int value) {
 		}
 		insert_integer_recursion(node->left, value);
 	}
+}
+
+void BST::insert_integer_loop(int value) {
+	struct node* tempNode = root;
+	dir dir;
+	while (true) {
+		dir = value > (tempNode)->value ? dir::right : dir::left;
+		if ((dir == dir::right ? tempNode->right : tempNode->left) == nullptr) { break; }
+		tempNode = dir == dir::right ? tempNode->right : tempNode->left;
+	}
+	struct node* newNode = create_node(value);
+	dir == dir::right ? tempNode->right = newNode : tempNode->left = newNode;
+	map.find(value) != map.end() ? map[value]++ : map[value] = 1;
+	return;
 }
 
 void BST::add_node(dir dir, node* source, node* dest) {
@@ -68,6 +82,26 @@ void BST::print_tree_recursion(node* node) {
 		print_tree_recursion(node->right);
 	}
 }
+
+int BST::most_common_integer() {
+	int max = -1;
+	for (std::pair<int, int> pair : map) {
+		if (pair.second > map[max]) { max = pair.first; }
+	}
+	return max;
+}
+
+int BST::largest_integer() {
+	return largest_integer_recursion(root);
+}
+
+int BST::largest_integer_recursion(node* node) {
+	if (node->right == nullptr) { return node->value; }
+	return largest_integer_recursion(node->right);
+}
+
+int BST::sum_of_all_integers(){}
+
 node* BST::create_node(int value) {
 	struct node* newNode = new node;
 	newNode->value = value;
